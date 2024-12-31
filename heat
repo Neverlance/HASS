@@ -1,24 +1,24 @@
 blueprint:
-  name: Heizungssteuerung mit Wochentagskonfiguration
-  description: Steuere eine Heizung basierend auf individuell konfigurierbaren Zeiträumen und Temperaturen für jeden Wochentag.
+  name: Heating Control with Individual Day and Time Configuration
+  description: Control heating based on individually configurable schedules and temperatures for each day of the week.
   domain: automation
   input:
     temperature_sensor:
-      name: Temperatur-Sensor
-      description: Wähle den Sensor, der die Raumtemperatur misst.
+      name: Temperature Sensor
+      description: Select the sensor measuring the room temperature.
       selector:
         entity:
           domain: sensor
           device_class: temperature
     heater_entity:
-      name: Heizung
-      description: Wähle die Entität der Heizung (Thermostat oder Heizkörperventil).
+      name: Heater
+      description: Select the heating entity (climate or radiator valve).
       selector:
         entity:
           domain: climate
     default_temperature:
-      name: Standardtemperatur
-      description: Temperatur, die für Zwischenzeiten verwendet wird.
+      name: Default Temperature
+      description: Temperature to use during time gaps between periods.
       default: 20
       selector:
         number:
@@ -27,8 +27,8 @@ blueprint:
           step: 0.5
           unit_of_measurement: "°C"
     hysteresis:
-      name: Hysterese
-      description: Differenzwert, bevor die Heizung ein- oder ausgeschaltet wird.
+      name: Hysteresis
+      description: Difference before turning the heater on or off.
       default: 0.5
       selector:
         number:
@@ -37,7 +37,7 @@ blueprint:
           step: 0.1
           unit_of_measurement: "°C"
     monday_times:
-      name: Montag - Zeiten und Temperaturen
+      name: Monday - Times and Temperatures
       default:
         morning: {start: "06:00:00", end: "08:00:00", temperature: 22}
         day: {start: "08:00:00", end: "18:00:00", temperature: 21}
@@ -46,7 +46,7 @@ blueprint:
       selector:
         object: {}
     tuesday_times:
-      name: Dienstag - Zeiten und Temperaturen
+      name: Tuesday - Times and Temperatures
       default:
         morning: {start: "06:00:00", end: "08:00:00", temperature: 22}
         day: {start: "08:00:00", end: "18:00:00", temperature: 21}
@@ -55,7 +55,7 @@ blueprint:
       selector:
         object: {}
     wednesday_times:
-      name: Mittwoch - Zeiten und Temperaturen
+      name: Wednesday - Times and Temperatures
       default:
         morning: {start: "06:00:00", end: "08:00:00", temperature: 22}
         day: {start: "08:00:00", end: "18:00:00", temperature: 21}
@@ -64,7 +64,7 @@ blueprint:
       selector:
         object: {}
     thursday_times:
-      name: Donnerstag - Zeiten und Temperaturen
+      name: Thursday - Times and Temperatures
       default:
         morning: {start: "06:00:00", end: "08:00:00", temperature: 22}
         day: {start: "08:00:00", end: "18:00:00", temperature: 21}
@@ -73,7 +73,7 @@ blueprint:
       selector:
         object: {}
     friday_times:
-      name: Freitag - Zeiten und Temperaturen
+      name: Friday - Times and Temperatures
       default:
         morning: {start: "06:00:00", end: "08:00:00", temperature: 22}
         day: {start: "08:00:00", end: "18:00:00", temperature: 21}
@@ -82,7 +82,7 @@ blueprint:
       selector:
         object: {}
     saturday_times:
-      name: Samstag - Zeiten und Temperaturen
+      name: Saturday - Times and Temperatures
       default:
         morning: {start: "07:00:00", end: "09:00:00", temperature: 22}
         day: {start: "09:00:00", end: "18:00:00", temperature: 21}
@@ -91,7 +91,7 @@ blueprint:
       selector:
         object: {}
     sunday_times:
-      name: Sonntag - Zeiten und Temperaturen
+      name: Sunday - Times and Temperatures
       default:
         morning: {start: "07:00:00", end: "09:00:00", temperature: 22}
         day: {start: "09:00:00", end: "18:00:00", temperature: 21}
@@ -105,7 +105,8 @@ trigger:
     entity_id: !input temperature_sensor
 
 variables:
-  current_temperature: "{{ states(!input temperature_sensor) | float }}"
+  temperature_sensor: !input temperature_sensor
+  current_temperature: "{{ states[temperature_sensor] | float }}"
   hysteresis: !input hysteresis
   heater_entity: !input heater_entity
   today_config: >
@@ -142,11 +143,11 @@ action:
             value_template: >
               {{ current_temperature < (target_temperature - hysteresis) }}
         sequence:
-          - service: climate.set_hvac_mode
+          - service: climate.set_temperature
             target:
               entity_id: !input heater_entity
             data:
-              hvac_mode: "heat"
+              temperature: "{{ target_temperature }}"
       - conditions:
           - condition: template
             value_template: >
