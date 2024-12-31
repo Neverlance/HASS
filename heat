@@ -1,0 +1,160 @@
+blueprint:
+  name: Heizungssteuerung mit Wochentagskonfiguration
+  description: Steuere eine Heizung basierend auf individuell konfigurierbaren Zeiträumen und Temperaturen für jeden Wochentag.
+  domain: automation
+  input:
+    temperature_sensor:
+      name: Temperatur-Sensor
+      description: Wähle den Sensor, der die Raumtemperatur misst.
+      selector:
+        entity:
+          domain: sensor
+          device_class: temperature
+    heater_entity:
+      name: Heizung
+      description: Wähle die Entität der Heizung (Thermostat oder Heizkörperventil).
+      selector:
+        entity:
+          domain: climate
+    default_temperature:
+      name: Standardtemperatur
+      description: Temperatur, die für Zwischenzeiten verwendet wird.
+      default: 20
+      selector:
+        number:
+          min: 10
+          max: 30
+          step: 0.5
+          unit_of_measurement: "°C"
+    hysteresis:
+      name: Hysterese
+      description: Differenzwert, bevor die Heizung ein- oder ausgeschaltet wird.
+      default: 0.5
+      selector:
+        number:
+          min: 0.1
+          max: 5
+          step: 0.1
+          unit_of_measurement: "°C"
+    monday_times:
+      name: Montag - Zeiten und Temperaturen
+      default:
+        morning: {start: "06:00:00", end: "08:00:00", temperature: 22}
+        day: {start: "08:00:00", end: "18:00:00", temperature: 21}
+        evening: {start: "18:00:00", end: "22:00:00", temperature: 19}
+        night: {start: "22:00:00", end: "06:00:00", temperature: 18}
+      selector:
+        object: {}
+    tuesday_times:
+      name: Dienstag - Zeiten und Temperaturen
+      default:
+        morning: {start: "06:00:00", end: "08:00:00", temperature: 22}
+        day: {start: "08:00:00", end: "18:00:00", temperature: 21}
+        evening: {start: "18:00:00", end: "22:00:00", temperature: 19}
+        night: {start: "22:00:00", end: "06:00:00", temperature: 18}
+      selector:
+        object: {}
+    wednesday_times:
+      name: Mittwoch - Zeiten und Temperaturen
+      default:
+        morning: {start: "06:00:00", end: "08:00:00", temperature: 22}
+        day: {start: "08:00:00", end: "18:00:00", temperature: 21}
+        evening: {start: "18:00:00", end: "22:00:00", temperature: 19}
+        night: {start: "22:00:00", end: "06:00:00", temperature: 18}
+      selector:
+        object: {}
+    thursday_times:
+      name: Donnerstag - Zeiten und Temperaturen
+      default:
+        morning: {start: "06:00:00", end: "08:00:00", temperature: 22}
+        day: {start: "08:00:00", end: "18:00:00", temperature: 21}
+        evening: {start: "18:00:00", end: "22:00:00", temperature: 19}
+        night: {start: "22:00:00", end: "06:00:00", temperature: 18}
+      selector:
+        object: {}
+    friday_times:
+      name: Freitag - Zeiten und Temperaturen
+      default:
+        morning: {start: "06:00:00", end: "08:00:00", temperature: 22}
+        day: {start: "08:00:00", end: "18:00:00", temperature: 21}
+        evening: {start: "18:00:00", end: "22:00:00", temperature: 19}
+        night: {start: "22:00:00", end: "06:00:00", temperature: 18}
+      selector:
+        object: {}
+    saturday_times:
+      name: Samstag - Zeiten und Temperaturen
+      default:
+        morning: {start: "07:00:00", end: "09:00:00", temperature: 22}
+        day: {start: "09:00:00", end: "18:00:00", temperature: 21}
+        evening: {start: "18:00:00", end: "22:00:00", temperature: 19}
+        night: {start: "22:00:00", end: "07:00:00", temperature: 18}
+      selector:
+        object: {}
+    sunday_times:
+      name: Sonntag - Zeiten und Temperaturen
+      default:
+        morning: {start: "07:00:00", end: "09:00:00", temperature: 22}
+        day: {start: "09:00:00", end: "18:00:00", temperature: 21}
+        evening: {start: "18:00:00", end: "22:00:00", temperature: 19}
+        night: {start: "22:00:00", end: "07:00:00", temperature: 18}
+      selector:
+        object: {}
+
+trigger:
+  - platform: state
+    entity_id: !input temperature_sensor
+
+variables:
+  current_temperature: "{{ states(!input temperature_sensor) | float }}"
+  hysteresis: !input hysteresis
+  heater_entity: !input heater_entity
+  today_config: >
+    {% set today = now().strftime('%A').lower() %}
+    {{ {
+      "monday": !input monday_times,
+      "tuesday": !input tuesday_times,
+      "wednesday": !input wednesday_times,
+      "thursday": !input thursday_times,
+      "friday": !input friday_times,
+      "saturday": !input saturday_times,
+      "sunday": !input sunday_times
+    }[today] }}
+  target_temperature: >
+    {% set now_time = now().strftime('%H:%M:%S') %}
+    {% if now_time >= today_config['morning']['start'] and now_time < today_config['morning']['end'] %}
+      {{ today_config['morning']['temperature'] }}
+    {% elif now_time >= today_config['day']['start'] and now_time < today_config['day']['end'] %}
+      {{ today_config['day']['temperature'] }}
+    {% elif now_time >= today_config['evening']['start'] and now_time < today_config['evening']['end'] %}
+      {{ today_config['evening']['temperature'] }}
+    {% elif now_time >= today_config['night']['start'] or now_time < today_config['night']['end'] %}
+      {{ today_config['night']['temperature'] }}
+    {% else %}
+      {{ !input default_temperature }}
+    {% endif %}
+
+condition: []
+
+action:
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: >
+              {{ current_temperature < (target_temperature - hysteresis) }}
+        sequence:
+          - service: climate.set_hvac_mode
+            target:
+              entity_id: !input heater_entity
+            data:
+              hvac_mode: "heat"
+      - conditions:
+          - condition: template
+            value_template: >
+              {{ current_temperature > (target_temperature + hysteresis) }}
+        sequence:
+          - service: climate.set_hvac_mode
+            target:
+              entity_id: !input heater_entity
+            data:
+              hvac_mode: "off"
+    default: []
