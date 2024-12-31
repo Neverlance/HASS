@@ -1,6 +1,8 @@
 blueprint:
-  name: Heating Control with Individual Day and Time Configuration
-  description: Control heating based on individually configurable schedules and temperatures for each day of the week.
+  name: Heating Control with Weekly Configuration
+  description: >
+    Control your heating system with individual schedules and temperatures for each day of the week.
+    Supports time periods (Morning, Day, Evening, Night) and a default temperature for gaps.
   domain: automation
   input:
     temperature_sensor:
@@ -18,7 +20,7 @@ blueprint:
           domain: climate
     default_temperature:
       name: Default Temperature
-      description: Temperature to use during time gaps between periods.
+      description: Temperature to apply during time gaps between periods.
       default: 20
       selector:
         number:
@@ -28,7 +30,7 @@ blueprint:
           unit_of_measurement: "°C"
     hysteresis:
       name: Hysteresis
-      description: Difference before turning the heater on or off.
+      description: Tolerance range to avoid frequent toggling of the heater.
       default: 0.5
       selector:
         number:
@@ -36,67 +38,45 @@ blueprint:
           max: 5
           step: 0.1
           unit_of_measurement: "°C"
-    monday_times:
-      name: Monday - Times and Temperatures
+    weekly_schedule:
+      name: Weekly Schedule
+      description: Configure temperatures and time periods for each day of the week.
       default:
-        morning: {start: "06:00:00", end: "08:00:00", temperature: 22}
-        day: {start: "08:00:00", end: "18:00:00", temperature: 21}
-        evening: {start: "18:00:00", end: "22:00:00", temperature: 19}
-        night: {start: "22:00:00", end: "06:00:00", temperature: 18}
-      selector:
-        object: {}
-    tuesday_times:
-      name: Tuesday - Times and Temperatures
-      default:
-        morning: {start: "06:00:00", end: "08:00:00", temperature: 22}
-        day: {start: "08:00:00", end: "18:00:00", temperature: 21}
-        evening: {start: "18:00:00", end: "22:00:00", temperature: 19}
-        night: {start: "22:00:00", end: "06:00:00", temperature: 18}
-      selector:
-        object: {}
-    wednesday_times:
-      name: Wednesday - Times and Temperatures
-      default:
-        morning: {start: "06:00:00", end: "08:00:00", temperature: 22}
-        day: {start: "08:00:00", end: "18:00:00", temperature: 21}
-        evening: {start: "18:00:00", end: "22:00:00", temperature: 19}
-        night: {start: "22:00:00", end: "06:00:00", temperature: 18}
-      selector:
-        object: {}
-    thursday_times:
-      name: Thursday - Times and Temperatures
-      default:
-        morning: {start: "06:00:00", end: "08:00:00", temperature: 22}
-        day: {start: "08:00:00", end: "18:00:00", temperature: 21}
-        evening: {start: "18:00:00", end: "22:00:00", temperature: 19}
-        night: {start: "22:00:00", end: "06:00:00", temperature: 18}
-      selector:
-        object: {}
-    friday_times:
-      name: Friday - Times and Temperatures
-      default:
-        morning: {start: "06:00:00", end: "08:00:00", temperature: 22}
-        day: {start: "08:00:00", end: "18:00:00", temperature: 21}
-        evening: {start: "18:00:00", end: "22:00:00", temperature: 19}
-        night: {start: "22:00:00", end: "06:00:00", temperature: 18}
-      selector:
-        object: {}
-    saturday_times:
-      name: Saturday - Times and Temperatures
-      default:
-        morning: {start: "07:00:00", end: "09:00:00", temperature: 22}
-        day: {start: "09:00:00", end: "18:00:00", temperature: 21}
-        evening: {start: "18:00:00", end: "22:00:00", temperature: 19}
-        night: {start: "22:00:00", end: "07:00:00", temperature: 18}
-      selector:
-        object: {}
-    sunday_times:
-      name: Sunday - Times and Temperatures
-      default:
-        morning: {start: "07:00:00", end: "09:00:00", temperature: 22}
-        day: {start: "09:00:00", end: "18:00:00", temperature: 21}
-        evening: {start: "18:00:00", end: "22:00:00", temperature: 19}
-        night: {start: "22:00:00", end: "07:00:00", temperature: 18}
+        monday:
+          morning: {start: "06:30:00", end: "09:00:00", temperature: 20}
+          day: {start: "10:00:00", end: "15:30:00", temperature: 18}
+          evening: {start: "15:30:00", end: "21:00:00", temperature: 20}
+          night: {start: "21:00:00", end: "06:00:00", temperature: 18}
+        tuesday:
+          morning: {start: "06:30:00", end: "09:00:00", temperature: 20}
+          day: {start: "10:00:00", end: "15:30:00", temperature: 18}
+          evening: {start: "15:30:00", end: "21:00:00", temperature: 20}
+          night: {start: "21:00:00", end: "06:00:00", temperature: 18}
+        wednesday:
+          morning: {start: "06:30:00", end: "09:00:00", temperature: 20}
+          day: {start: "10:00:00", end: "15:30:00", temperature: 18}
+          evening: {start: "15:30:00", end: "21:00:00", temperature: 20}
+          night: {start: "21:00:00", end: "06:00:00", temperature: 18}
+        thursday:
+          morning: {start: "06:30:00", end: "09:00:00", temperature: 20}
+          day: {start: "10:00:00", end: "15:30:00", temperature: 18}
+          evening: {start: "15:30:00", end: "21:00:00", temperature: 20}
+          night: {start: "21:00:00", end: "06:00:00", temperature: 18}
+        friday:
+          morning: {start: "06:30:00", end: "09:00:00", temperature: 20}
+          day: {start: "10:00:00", end: "15:30:00", temperature: 18}
+          evening: {start: "15:30:00", end: "21:00:00", temperature: 20}
+          night: {start: "21:00:00", end: "06:00:00", temperature: 18}
+        saturday:
+          morning: {start: "06:30:00", end: "10:00:00", temperature: 20}
+          day: {start: "10:00:00", end: "15:30:00", temperature: 20}
+          evening: {start: "15:30:00", end: "21:00:00", temperature: 20}
+          night: {start: "21:00:00", end: "06:00:00", temperature: 18}
+        sunday:
+          morning: {start: "06:30:00", end: "10:00:00", temperature: 20}
+          day: {start: "10:00:00", end: "15:30:00", temperature: 20}
+          evening: {start: "15:30:00", end: "21:00:00", temperature: 20}
+          night: {start: "21:00:00", end: "06:00:00", temperature: 18}
       selector:
         object: {}
 
@@ -106,35 +86,19 @@ trigger:
 
 variables:
   temperature_sensor: !input temperature_sensor
-  current_temperature: "{{ states[temperature_sensor] | float }}"
+  current_temperature: "{{ states[temperature_sensor].state | float }}"
   hysteresis: !input hysteresis
   heater_entity: !input heater_entity
-  today_config: >
-    {% set today = now().strftime('%A').lower() %}
-    {{ {
-      "monday": !input monday_times,
-      "tuesday": !input tuesday_times,
-      "wednesday": !input wednesday_times,
-      "thursday": !input thursday_times,
-      "friday": !input friday_times,
-      "saturday": !input saturday_times,
-      "sunday": !input sunday_times
-    }[today] }}
+  today_schedule: >
+    {{ input.weekly_schedule[now().strftime('%A').lower()] }}
   target_temperature: >
     {% set now_time = now().strftime('%H:%M:%S') %}
-    {% if now_time >= today_config['morning']['start'] and now_time < today_config['morning']['end'] %}
-      {{ today_config['morning']['temperature'] }}
-    {% elif now_time >= today_config['day']['start'] and now_time < today_config['day']['end'] %}
-      {{ today_config['day']['temperature'] }}
-    {% elif now_time >= today_config['evening']['start'] and now_time < today_config['evening']['end'] %}
-      {{ today_config['evening']['temperature'] }}
-    {% elif now_time >= today_config['night']['start'] or now_time < today_config['night']['end'] %}
-      {{ today_config['night']['temperature'] }}
-    {% else %}
-      {{ !input default_temperature }}
-    {% endif %}
-
-condition: []
+    {% for period, config in today_schedule.items() %}
+      {% if config.start <= now_time < config.end %}
+        {{ config.temperature }}
+      {% endif %}
+    {% endfor %}
+    {{ input.default_temperature }}
 
 action:
   - choose:
