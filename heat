@@ -1,8 +1,7 @@
 blueprint:
-  name: Heating Control with Weekly Configuration
+  name: Heating Control with Daily Schedule
   description: >
-    Control your heating system with individual schedules and temperatures for each day of the week.
-    Supports time periods (Morning, Day, Evening, Night) and a default temperature for gaps.
+    Control your heating system with individually configurable time periods and temperatures for each day of the week.
   domain: automation
   input:
     temperature_sensor:
@@ -38,45 +37,67 @@ blueprint:
           max: 5
           step: 0.1
           unit_of_measurement: "°C"
-    weekly_schedule:
-      name: Weekly Schedule
-      description: Configure temperatures and time periods for each day of the week.
+    monday_times:
+      name: Monday - Times and Temperatures
       default:
-        monday:
-          morning: {start: "06:30:00", end: "09:00:00", temperature: 20}
-          day: {start: "10:00:00", end: "15:30:00", temperature: 18}
-          evening: {start: "15:30:00", end: "21:00:00", temperature: 20}
-          night: {start: "21:00:00", end: "06:00:00", temperature: 18}
-        tuesday:
-          morning: {start: "06:30:00", end: "09:00:00", temperature: 20}
-          day: {start: "10:00:00", end: "15:30:00", temperature: 18}
-          evening: {start: "15:30:00", end: "21:00:00", temperature: 20}
-          night: {start: "21:00:00", end: "06:00:00", temperature: 18}
-        wednesday:
-          morning: {start: "06:30:00", end: "09:00:00", temperature: 20}
-          day: {start: "10:00:00", end: "15:30:00", temperature: 18}
-          evening: {start: "15:30:00", end: "21:00:00", temperature: 20}
-          night: {start: "21:00:00", end: "06:00:00", temperature: 18}
-        thursday:
-          morning: {start: "06:30:00", end: "09:00:00", temperature: 20}
-          day: {start: "10:00:00", end: "15:30:00", temperature: 18}
-          evening: {start: "15:30:00", end: "21:00:00", temperature: 20}
-          night: {start: "21:00:00", end: "06:00:00", temperature: 18}
-        friday:
-          morning: {start: "06:30:00", end: "09:00:00", temperature: 20}
-          day: {start: "10:00:00", end: "15:30:00", temperature: 18}
-          evening: {start: "15:30:00", end: "21:00:00", temperature: 20}
-          night: {start: "21:00:00", end: "06:00:00", temperature: 18}
-        saturday:
-          morning: {start: "06:30:00", end: "10:00:00", temperature: 20}
-          day: {start: "10:00:00", end: "15:30:00", temperature: 20}
-          evening: {start: "15:30:00", end: "21:00:00", temperature: 20}
-          night: {start: "21:00:00", end: "06:00:00", temperature: 18}
-        sunday:
-          morning: {start: "06:30:00", end: "10:00:00", temperature: 20}
-          day: {start: "10:00:00", end: "15:30:00", temperature: 20}
-          evening: {start: "15:30:00", end: "21:00:00", temperature: 20}
-          night: {start: "21:00:00", end: "06:00:00", temperature: 18}
+        morning: {start: "06:30:00", end: "09:00:00", temperature: 20}
+        day: {start: "09:00:00", end: "15:30:00", temperature: 18}
+        evening: {start: "15:30:00", end: "21:00:00", temperature: 20}
+        night: {start: "21:00:00", end: "06:00:00", temperature: 18}
+      selector:
+        object: {}
+    tuesday_times:
+      name: Tuesday - Times and Temperatures
+      default:
+        morning: {start: "06:30:00", end: "09:00:00", temperature: 20}
+        day: {start: "09:00:00", end: "15:30:00", temperature: 18}
+        evening: {start: "15:30:00", end: "21:00:00", temperature: 20}
+        night: {start: "21:00:00", end: "06:00:00", temperature: 18}
+      selector:
+        object: {}
+    wednesday_times:
+      name: Wednesday - Times and Temperatures
+      default:
+        morning: {start: "06:30:00", end: "09:00:00", temperature: 20}
+        day: {start: "09:00:00", end: "15:30:00", temperature: 18}
+        evening: {start: "15:30:00", end: "21:00:00", temperature: 20}
+        night: {start: "21:00:00", end: "06:00:00", temperature: 18}
+      selector:
+        object: {}
+    thursday_times:
+      name: Thursday - Times and Temperatures
+      default:
+        morning: {start: "06:30:00", end: "09:00:00", temperature: 20}
+        day: {start: "09:00:00", end: "15:30:00", temperature: 18}
+        evening: {start: "15:30:00", end: "21:00:00", temperature: 20}
+        night: {start: "21:00:00", end: "06:00:00", temperature: 18}
+      selector:
+        object: {}
+    friday_times:
+      name: Friday - Times and Temperatures
+      default:
+        morning: {start: "06:30:00", end: "09:00:00", temperature: 20}
+        day: {start: "09:00:00", end: "15:30:00", temperature: 18}
+        evening: {start: "15:30:00", end: "21:00:00", temperature: 20}
+        night: {start: "21:00:00", end: "06:00:00", temperature: 18}
+      selector:
+        object: {}
+    saturday_times:
+      name: Saturday - Times and Temperatures
+      default:
+        morning: {start: "07:00:00", end: "10:00:00", temperature: 20}
+        day: {start: "10:00:00", end: "15:30:00", temperature: 20}
+        evening: {start: "15:30:00", end: "21:00:00", temperature: 20}
+        night: {start: "21:00:00", end: "06:00:00", temperature: 18}
+      selector:
+        object: {}
+    sunday_times:
+      name: Sunday - Times and Temperatures
+      default:
+        morning: {start: "07:00:00", end: "10:00:00", temperature: 20}
+        day: {start: "10:00:00", end: "15:30:00", temperature: 20}
+        evening: {start: "15:30:00", end: "21:00:00", temperature: 20}
+        night: {start: "21:00:00", end: "06:00:00", temperature: 18}
       selector:
         object: {}
 
@@ -85,20 +106,35 @@ trigger:
     entity_id: !input temperature_sensor
 
 variables:
-  temperature_sensor: !input temperature_sensor
-  current_temperature: "{{ states[temperature_sensor].state | float }}"
-  hysteresis: !input hysteresis
-  heater_entity: !input heater_entity
-  today_schedule: >
-    {{ input.weekly_schedule[now().strftime('%A').lower()] }}
+  current_temperature: "{{ states(input.temperature_sensor) | float }}"
+  hysteresis: "{{ input.hysteresis }}"
+  heater_entity: "{{ input.heater_entity }}"
+  today_config: >
+    {% set today = now().strftime('%A').lower() %}
+    {{ {
+      "monday": input.monday_times,
+      "tuesday": input.tuesday_times,
+      "wednesday": input.wednesday_times,
+      "thursday": input.thursday_times,
+      "friday": input.friday_times,
+      "saturday": input.saturday_times,
+      "sunday": input.sunday_times
+    }[today] }}
   target_temperature: >
     {% set now_time = now().strftime('%H:%M:%S') %}
-    {% for period, config in today_schedule.items() %}
-      {% if config.start <= now_time < config.end %}
-        {{ config.temperature }}
-      {% endif %}
-    {% endfor %}
-    {{ input.default_temperature }}
+    {% if now_time >= today_config['morning']['start'] and now_time < today_config['morning']['end'] %}
+      {{ today_config['morning']['temperature'] }}
+    {% elif now_time >= today_config['day']['start'] and now_time < today_config['day']['end'] %}
+      {{ today_config['day']['temperature'] }}
+    {% elif now_time >= today_config['evening']['start'] and now_time < today_config['evening']['end'] %}
+      {{ today_config['evening']['temperature'] }}
+    {% elif now_time >= today_config['night']['start'] or now_time < today_config['night']['end'] %}
+      {{ today_config['night']['temperature'] }}
+    {% else %}
+      {{ input.default_temperature }}
+    {% endif %}
+
+condition: []
 
 action:
   - choose:
@@ -107,11 +143,11 @@ action:
             value_template: >
               {{ current_temperature < (target_temperature - hysteresis) }}
         sequence:
-          - service: climate.set_temperature
+          - service: climate.set_hvac_mode
             target:
-              entity_id: !input heater_entity
+              entity_id: "{{ heater_entity }}"
             data:
-              temperature: "{{ target_temperature }}"
+              hvac_mode: "heat"
       - conditions:
           - condition: template
             value_template: >
@@ -119,7 +155,7 @@ action:
         sequence:
           - service: climate.set_hvac_mode
             target:
-              entity_id: !input heater_entity
+              entity_id: "{{ heater_entity }}"
             data:
               hvac_mode: "off"
     default: []
